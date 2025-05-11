@@ -60,6 +60,11 @@ func deleteTodo(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotFound)
 }
 
+func healthCheck(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("OK"))
+}
+
 func main() {
 	r := mux.NewRouter()
 
@@ -67,6 +72,7 @@ func main() {
 	r.HandleFunc("/todos", createTodo).Methods("POST")
 	r.HandleFunc("/todos/{id}", updateTodo).Methods("PUT")
 	r.HandleFunc("/todos/{id}", deleteTodo).Methods("DELETE")
+	r.HandleFunc("/healthz", healthCheck).Methods("GET")
 
 	// fmt.Println("🚀 Server started at http://localhost:8000")
 	// log.Fatal(http.ListenAndServe(":8000", r))
