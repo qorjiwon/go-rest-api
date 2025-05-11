@@ -10,6 +10,8 @@ import (
 
 	"go-rest-api/models" // Todo 데이터 구조 (구현한 모델 import)
 	"github.com/gorilla/mux" // 라우터 패키지 (경로 핸들링에 사용)
+	
+	"os"
 )
 
 var todos []models.Todo // Todo 리스트를 저장할 슬라이스
@@ -20,15 +22,15 @@ func getTodos(w http.ResponseWriter, r *http.Request) {
 
 func createTodo(w http.ResponseWriter, r *http.Request) {
 	var todo models.Todo
-	_ = json.NewDecoder(r.Body).Decode(&todo)
+	_ = json.NewDecoder(r.Body).Decode(&todo) // JSON → struct로 디코딩딩딩딩딩
 	todo.ID = len(todos) + 1
 	todos = append(todos, todo)
-	json.NewEncoder(w).Encode(todo)
+	json.NewEncoder(w).Encode(todo) // 새로 생성된 할 일을 응답
 }
 
 func updateTodo(w http.ResponseWriter, r *http.Request) {
-	params := mux.Vars(r)
-	id, _ := strconv.Atoi(params["id"])
+	params := mux.Vars(r) // URL에서 {id} 추출
+	id, _ := strconv.Atoi(params["id"]) // 문자열 → 정수 변환
 
 	for index, item := range todos {
 		if item.ID == id {
@@ -65,6 +67,14 @@ func main() {
 	r.HandleFunc("/todos/{id}", updateTodo).Methods("PUT")
 	r.HandleFunc("/todos/{id}", deleteTodo).Methods("DELETE")
 
-	fmt.Println("🚀 Server started at http://localhost:8000")
-	log.Fatal(http.ListenAndServe(":8000", r))
+	// fmt.Println("🚀 Server started at http://localhost:8000")
+	// log.Fatal(http.ListenAndServe(":8000", r))
+
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8000" // 로컬 테스트용 기본 포트
+	}
+
+	fmt.Printf("🚀 Server started at http://localhost:%s\n", port)
+	log.Fatal(http.ListenAndServe(":"+port, r))
 }
