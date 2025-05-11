@@ -17,6 +17,7 @@ import (
 var todos []models.Todo // Todo 리스트를 저장할 슬라이스
 
 func getTodos(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(todos)
 }
 
